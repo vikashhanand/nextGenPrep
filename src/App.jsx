@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { BookOpen, Moon, Sun, LogOut, ChevronRight } from 'lucide-react';
+import { BookOpen, Moon, Sun, ChevronRight } from 'lucide-react';
+import { SignedIn, SignedOut, UserButton } from '@clerk/clerk-react';
 import { AuthContext } from './AuthContext';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
@@ -12,7 +13,7 @@ import Login from './pages/Login';
 // ─── NAVBAR ─────────────────────────────────────────────────────────────────
 const Navbar = ({ theme, toggleTheme }) => {
   const location = useLocation();
-  const { user, logout } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); // Still used for compatibility/logic
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const Navbar = ({ theme, toggleTheme }) => {
           }}>
             <BookOpen size={18} color="#fff" />
           </div>
-          <span style={{ fontWeight: 800, fontSize: '1.2rem', tracking: '-0.02em', letterSpacing: '-0.02em' }}>nextGenPrep</span>
+          <span style={{ fontBold: 800, fontSize: '1.2rem', tracking: '-0.02em', letterSpacing: '-0.02em' }}>nextGenPrep</span>
         </Link>
 
         {/* Nav Links */}
@@ -69,28 +70,24 @@ const Navbar = ({ theme, toggleTheme }) => {
           >
             {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
           </button>
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', paddingLeft: '0.8rem', borderLeft: '1px solid var(--border)' }}>
-              <span className="hidden sm:inline" style={{ fontSize: '0.85rem', color: 'var(--fg-muted)' }}>
-                Hi, <strong style={{ color: 'var(--foreground)' }}>{user.name.split(' ')[0]}</strong>
-              </span>
-              <button
-                onClick={logout}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '0.4rem',
-                  background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)',
-                  color: '#ef4444', borderRadius: 10, padding: '0.4rem 0.8rem',
-                  fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
-                }}
-              >
-                <LogOut size={13} /> Logout
-              </button>
-            </div>
-          ) : (
+          
+          <SignedIn>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', paddingLeft: '0.8rem', borderLeft: '1px solid var(--border)' }}>
+               <UserButton afterSignOutUrl="/" 
+                 appearance={{
+                   elements: {
+                     avatarBox: "w-8 h-8 rounded-lg",
+                   }
+                 }}
+               />
+             </div>
+          </SignedIn>
+          
+          <SignedOut>
             <Link to="/login" className="btn btn-primary" style={{ fontSize: '0.85rem', padding: '0.45rem 1.1rem' }}>
               Sign In
             </Link>
-          )}
+          </SignedOut>
         </div>
       </div>
     </nav>

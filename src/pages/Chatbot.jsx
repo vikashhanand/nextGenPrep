@@ -3,6 +3,7 @@ import {
   Send, Bot, User, Sparkles, Copy, Check, Trash2, 
   StopCircle, Plus, MessageSquare, Menu, X as CloseIcon, ChevronLeft, ChevronRight 
 } from 'lucide-react';
+import { API_BASE_URL } from '../api';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Renders a message with inline markdown / code blocks
@@ -133,7 +134,7 @@ export default function Chatbot() {
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
     try {
-      const res = await fetch('http://localhost:5001/api/chat', {
+      const res = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: userMsg }),

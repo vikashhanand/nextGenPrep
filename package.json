@@ -7,9 +7,13 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "start": "node server/server.js",
+    "server": "node server/server.js"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.61.4",
+    "@clerk/clerk-sdk-node": "^4.13.23",
     "@react-oauth/google": "^0.13.4",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",

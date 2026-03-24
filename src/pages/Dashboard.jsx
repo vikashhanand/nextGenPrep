@@ -3,6 +3,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Award, Target, Clock, AlertCircle } from 'lucide-react';
 import { AuthContext } from '../AuthContext';
 import { Navigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api';
 
 const defaultChartData = [
   { name: 'Initial', score: 0, accuracy: 0 },
@@ -15,7 +16,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!token) return;
-    fetch('http://localhost:5001/api/dashboard', {
+    fetch(`${API_BASE_URL}/api/dashboard`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(r => r.json())

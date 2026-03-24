@@ -2,27 +2,26 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import { AuthProvider } from './AuthContext.jsx';
-import { GoogleOAuthProvider } from '@react-oauth/google';
+import { ClerkProvider } from '@clerk/clerk-react';
 import './index.css';
 
-// ─── GOOGLE LOGIN CONFIGURATION ──────────────────────────────────────────────
-// 1. Go to: https://console.cloud.google.com/
-// 2. Create a project -> APIs & Services -> Credentials
-// 3. Create OAuth Client ID (Web Application)
-// 4. Authorized JavaScript Origin: http://localhost:5173
-// 5. PASTE YOUR ID BELOW:
-const GOOGLE_CLIENT_ID = "YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com";
+// ─── CLERK CONFIGURATION ──────────────────────────────────────────────────
+// 1. Go to: https://dashboard.clerk.com/
+// 2. Create an account -> Create Application
+// 3. Choose your Auth methods (Email, Google, etc.)
+// 4. PASTE your Publishable Key BELOW:
+const PUBLISHABLE_KEY = "pk_test_YOUR_CLERK_KEY_HERE";
 
-if (GOOGLE_CLIENT_ID.includes("YOUR_GOOGLE_CLIENT_ID_HERE")) {
-  console.warn("⚠️ GOOGLE_CLIENT_ID is not configured. Google Sign-In will not work until you replace the placeholder in src/main.jsx with your real ID from Google Cloud Console.");
+if (!PUBLISHABLE_KEY || PUBLISHABLE_KEY.includes("_YOUR_CLERK_KEY_HERE")) {
+  console.error("⚠️ CLERK_PUBLISHABLE_KEY is missing! Authentication will NOT work. Please add your key in src/main.jsx or as an environment variable.");
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+    <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
       <AuthProvider>
         <App />
       </AuthProvider>
-    </GoogleOAuthProvider>
+    </ClerkProvider>
   </React.StrictMode>
 );

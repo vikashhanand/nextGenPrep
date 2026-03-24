@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Play, Clock, CheckCircle2, X, Loader2, Trophy, ChevronRight, AlertTriangle, BookOpen, List, Shuffle, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api';
 
 /* ════════════════════════════════════════════════════════════════════════════
    CHAPTER BANKS — Each subject → chapters → questions
@@ -468,9 +469,9 @@ function ResultScreen({ title, score, total, timeUp, onRetry, onBack }) {
 
   // save score
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('ngp_token');
     if (!token) return;
-    fetch('http://localhost:5001/api/tests', {
+    fetch(`${API_BASE_URL}/api/tests`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ subject: title, score, total, accuracy: parseFloat(pct), date: new Date().toLocaleDateString() }),
