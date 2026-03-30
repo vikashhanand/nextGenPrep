@@ -1,15 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
+"use client";
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { 
   Send, Bot, User, Sparkles, Copy, Check, Trash2, 
   StopCircle, Plus, MessageSquare, Menu, X as CloseIcon, ChevronLeft, ChevronRight 
 } from 'lucide-react';
-import { API_BASE_URL } from '../api';
+import { AuthContext } from '../components/AuthProvider';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Renders a message with inline markdown / code blocks
 // ─────────────────────────────────────────────────────────────────────────────
 function MessageRenderer({ text }) {
-  const parts = text.split(/(```[\s\S]*?```)/g);
+  if (!text) return null;
+  const parts = String(text).split(/(```[\s\S]*?```)/g);
   return (
     <div className="text-[15px] leading-relaxed" style={{ wordBreak: 'break-word' }}>
       {parts.map((part, i) => {
@@ -53,6 +55,7 @@ function CodeBlock({ code, lang }) {
 // CHATBOT COMPONENT (Fully Integrated Board)
 // ─────────────────────────────────────────────────────────────────────────────
 export default function Chatbot() {
+  const { user, token, isLoaded } = useContext(AuthContext);
   const [sessions, setSessions] = useState(() => {
     const saved = localStorage.getItem('ngp_chat_sessions');
     if (saved) {
@@ -134,9 +137,12 @@ export default function Chatbot() {
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/chat`, {
+      const res = await fetch('/api/ai', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ message: userMsg }),
       });
       const data = await res.json();
@@ -188,9 +194,11 @@ export default function Chatbot() {
           </div>
           <div className="p-6 mt-auto border-t border-border bg-secondary/10 shrink-0">
              <div className="flex items-center gap-3 p-3.5 rounded-2xl bg-card border border-border/50">
-               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-black text-sm">VA</div>
+               <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-white font-black text-sm">
+                 {user?.name?.charAt(0) || 'U'}
+               </div>
                <div>
-                  <p className="text-[13px] font-black text-foreground">Vikash Anand</p>
+                  <p className="text-[13px] font-black text-foreground truncate max-w-[120px]">{user?.name || 'User'}</p>
                   <p className="text-[10px] text-primary font-black uppercase tracking-tighter">nextGenPrep</p>
                </div>
              </div>

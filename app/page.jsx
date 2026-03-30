@@ -1,5 +1,6 @@
+"use client";
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { ArrowRight, BookOpen, BrainCircuit, LineChart, Play, Sparkles, Target } from 'lucide-react';
 
 const FEATURES = [
@@ -55,10 +56,10 @@ export default function Home() {
         </p>
 
         <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link to="/mock-tests" className="btn btn-primary" style={{ fontSize: '0.95rem', padding: '0.65rem 1.5rem', borderRadius: 99 }}>
+          <Link href="/mock-tests" className="btn btn-primary" style={{ fontSize: '0.95rem', padding: '0.65rem 1.5rem', borderRadius: 99 }}>
             <Play fill="currentColor" size={15} /> Take a Free Test
           </Link>
-          <Link to="/study-materials" className="btn btn-secondary" style={{ fontSize: '0.95rem', padding: '0.65rem 1.5rem', borderRadius: 99 }}>
+          <Link href="/study-materials" className="btn btn-secondary" style={{ fontSize: '0.95rem', padding: '0.65rem 1.5rem', borderRadius: 99 }}>
             Browse Materials <ArrowRight size={15} />
           </Link>
         </div>
@@ -124,7 +125,7 @@ export default function Home() {
                 <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.4rem' }}>{f.title}</h3>
                 <p style={{ fontSize: '0.87rem', color: 'var(--fg-muted)', lineHeight: 1.6 }}>{f.desc}</p>
               </div>
-              <Link to={f.link} style={{
+              <Link href={f.link} style={{
                 display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
                 color: f.color, fontSize: '0.85rem', fontWeight: 700,
                 textDecoration: 'none', transition: 'gap 0.2s',
@@ -163,10 +164,10 @@ export default function Home() {
             Join thousands of students using NextGenPrep. Create a free account to track your scores.
           </p>
           <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap', position: 'relative' }}>
-            <Link to="/login" className="btn btn-primary" style={{ padding: '0.65rem 1.75rem', fontSize: '0.95rem' }}>
+            <Link href="/login" className="btn btn-primary" style={{ padding: '0.65rem 1.75rem', fontSize: '0.95rem' }}>
               Create Free Account
             </Link>
-            <Link to="/chatbot" className="btn btn-secondary" style={{ padding: '0.65rem 1.75rem', fontSize: '0.95rem' }}>
+            <Link href="/chatbot" className="btn btn-secondary" style={{ padding: '0.65rem 1.75rem', fontSize: '0.95rem' }}>
               Ask AI Tutor
             </Link>
           </div>

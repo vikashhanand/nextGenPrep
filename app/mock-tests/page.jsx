@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+"use client";
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import { Play, Clock, CheckCircle2, X, Loader2, Trophy, ChevronRight, AlertTriangle, BookOpen, List, Shuffle, ChevronLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { API_BASE_URL } from '../api';
+import { useRouter } from 'next/navigation';
+
+import { AuthContext } from '../components/AuthProvider';
 
 /* ════════════════════════════════════════════════════════════════════════════
    CHAPTER BANKS — Each subject → chapters → questions
@@ -461,22 +463,22 @@ function QuizScreen({ title, questions, onDone }) {
    RESULT SCREEN
    ════════════════════════════════════════════════════════════════════════════ */
 function ResultScreen({ title, score, total, timeUp, onRetry, onBack }) {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
   const pct = total > 0 ? ((score / total) * 100).toFixed(1) : 0;
   const grade = pct >= 80 ? { label: 'Excellent!', color: '#4ade80', emoji: '🏆' }
     : pct >= 60 ? { label: 'Good Job!', color: 'var(--primary)', emoji: '👍' }
     : { label: 'Keep Practicing!', color: '#f87171', emoji: '💪' };
 
   // save score
+  const { token } = useContext(AuthContext);
   useEffect(() => {
-    const token = localStorage.getItem('ngp_token');
     if (!token) return;
-    fetch(`${API_BASE_URL}/api/tests`, {
+    fetch(`/api/tests`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ subject: title, score, total, accuracy: parseFloat(pct), date: new Date().toLocaleDateString() }),
     }).catch(() => {});
-  }, []);
+  }, [token]);
 
   return (
     <div style={{ maxWidth: 520, margin: '0 auto', padding: '1rem', textAlign: 'center' }} className="animate-slide-up">
@@ -505,14 +507,14 @@ function ResultScreen({ title, score, total, timeUp, onRetry, onBack }) {
    MAIN PAGE
    ════════════════════════════════════════════════════════════════════════════ */
 export default function MockTests() {
-  const navigate = useNavigate();
+  const navigate = useRouter().push;
   const [tab, setTab] = useState('chapter');        // 'chapter' | 'full'
   const [selSubject, setSelSubject] = useState(null);
   const [quiz, setQuiz] = useState(null);           // { title, questions }
   const [result, setResult] = useState(null);
 
   const requireLogin = () => {
-    const token = localStorage.getItem('token');
+    const token = typeof window !== 'undefined' ? localStorage.getItem('ngp_token') : null;
     if (!token) { alert('Please login to attempt tests and save your scores.'); navigate('/login'); return false; }
     return true;
   };

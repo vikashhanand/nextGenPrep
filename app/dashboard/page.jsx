@@ -1,22 +1,23 @@
+"use client";
 import React, { useState, useRef, useEffect, useContext } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Award, Target, Clock, AlertCircle } from 'lucide-react';
-import { AuthContext } from '../AuthContext';
-import { Navigate } from 'react-router-dom';
-import { API_BASE_URL } from '../api';
+import { AuthContext } from '../components/AuthProvider';
+import { useRouter, redirect } from 'next/navigation';
+
 
 const defaultChartData = [
   { name: 'Initial', score: 0, accuracy: 0 },
 ];
 
 const Dashboard = () => {
-  const { user, token } = useContext(AuthContext);
+  const { user, token, isLoaded } = useContext(AuthContext);
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!token) return;
-    fetch(`${API_BASE_URL}/api/dashboard`, {
+    fetch(`/api/dashboard`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
     .then(r => r.json())
@@ -30,27 +31,32 @@ const Dashboard = () => {
     });
   }, [token]);
 
+  if (!isLoaded) return <div className="page-wrapper flex items-center justify-center">Loading...</div>;
+
   if (!user) {
-    return <Navigate to="/login" />;
+    if (typeof window !== 'undefined') {
+      redirect('/login');
+    }
+    return <div className="page-wrapper flex items-center justify-center">Redirecting to login...</div>;
   }
 
   // Derived Statistics
-  const totalTests = tests.length;
-  const avgScore = totalTests ? (tests.reduce((acc, t) => acc + (t.score / t.total) * 100, 0) / totalTests).toFixed(1) : 0;
-  const avgAccuracy = totalTests ? (tests.reduce((acc, t) => acc + t.accuracy, 0) / totalTests).toFixed(1) : 0;
+  const totalTests = tests?.length || 0;
+  const avgScore = totalTests ? (tests.reduce((acc, t) => acc + ((t?.score || 0) / (t?.total || 1)) * 100, 0) / totalTests).toFixed(1) : 0;
+  const avgAccuracy = totalTests ? (tests.reduce((acc, t) => acc + (t?.accuracy || 0), 0) / totalTests).toFixed(1) : 0;
   
   // Transform for recharts
-  const chartData = tests.length > 0 
+  const chartData = (tests && tests.length > 0) 
     ? [...tests].reverse().map((t, i) => ({
         name: `T${i+1}`,
-        score: t.score,
-        accuracy: t.accuracy
+        score: t?.score || 0,
+        accuracy: t?.accuracy || 0
       }))
     : defaultChartData;
 
   return (
     <div className="container animate-slide-up flex flex-col pt-8">
-      <h1 className="text-4xl mb-2 font-black">{user.name}'s Dashboard</h1>
+      <h1 className="text-4xl mb-2 font-black">{(user?.name || 'User')}'s Dashboard</h1>
       <p className="text-muted mb-8 text-lg">Track your test history, view report cards, and gain improvement insights.</p>
 
       {/* High-level stats */}
@@ -102,8 +108,8 @@ const Dashboard = () => {
             ) : tests.length === 0 ? (
               <p className="text-muted text-center py-12">No test history yet. Take a mock test!</p>
             ) : (
-              tests.map(test => (
-                <div key={test.id} className="p-4 border rounded-lg flex items-center justify-between" style={{ borderColor: 'var(--border)' }}>
+              tests.map((test, index) => (
+                <div key={test._id || index} className="p-4 border rounded-lg flex items-center justify-between" style={{ borderColor: 'var(--border)' }}>
                   <div>
                     <h4 className="font-bold">{test.subject}</h4>
                     <p className="text-sm text-muted">{test.date}</p>
