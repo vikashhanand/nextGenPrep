@@ -11,7 +11,7 @@ import { AuthContext } from '../components/AuthProvider';
 // ─────────────────────────────────────────────────────────────────────────────
 function MessageRenderer({ text }) {
   if (!text) return null;
-  const parts = String(text).split(/(```[\s\S]*?```)/g);
+  const parts = String(text).split(/(```[\s\S]*?```)/g);      
   return (
     <div className="text-[15px] leading-relaxed" style={{ wordBreak: 'break-word' }}>
       {parts.map((part, i) => {
